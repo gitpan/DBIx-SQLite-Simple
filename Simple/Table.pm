@@ -1,5 +1,5 @@
 #
-# $Id: Table.pm,v 1.16 2005/06/15 20:41:34 gomor Exp $
+# $Id: Table.pm,v 1.18 2006/04/17 14:40:53 gomor Exp $
 #
 
 package DBIx::SQLite::Simple::Table;
@@ -101,16 +101,16 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    my $str = $tPub->lookupString('pub', idPub => $id);
 
    # Add a beer from 'chez moi'
-   my $dremwell = TBeer->new(beer => 'Dremwell', country => '?');
-   $tBeer->insert([ $dremwell ]);
+   my $dremmwel = TBeer->new(beer => 'Dremmwel', country => '?');
+   $tBeer->insert([ $dremmwel ]);
 
    $tPub->commit;
    $tBeer->commit;
 
-   # Update Dremwell
-   my $dremwellOld = $dremwell->clone;
-   $dremwell->country('BZH');
-   $tBeer->update([ $dremwell ], $dremwellOld);
+   # Update Dremmwel
+   my $dremmwelOld = $dremmwel->clone;
+   $dremmwel->country('BZH');
+   $tBeer->update([ $dremmwel ], $dremmwelOld);
    $tBeer->commit;
 
    # Delete all pubs
@@ -337,6 +337,8 @@ sub _select {
    carp('_select: fetchall_arrayref: '. $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
+   $sth->finish;
+
    $self->can('_toObj')
       ? return $self->_toObj($res)
       : return $res->[0];
@@ -442,6 +444,51 @@ If called without parameters, returns the whole content as an arrayref. If calle
 
 sub select { shift->_select(@_) }
 
+=item B<selectById>
+
+This method returns a reference to an array with each array indice set to the corresponding table object id.
+
+=cut
+
+sub selectById {
+   my $self = shift;
+
+   no strict 'refs';
+   my $id     = ${ref($self). '::Id'};
+
+   my $sorted;
+   $sorted->[$_->$id] = $_ for @{$self->select};
+   $sorted;
+}
+
+=item B<getKey>
+
+Method used to generate a unique key, using to store and retrieve a database element quickly. By default, the key is the first field in the table schema (excluding the id field). It is user responsibility to override this method to use an appropriate key.
+
+=cut
+
+sub getKey {
+   my $self = shift;
+
+   no strict 'refs';
+   my @fields = @{ref($self). '::Fields'};
+   my $key = $fields[0];
+
+   $self->$key;
+}
+
+=item B<selectByKey>
+
+Method used to cache a table content. It uses B<getKey> to store the object into a reference to a hash. You access a cached element by calling B<getKey> on an object.
+
+=cut
+
+sub selectByKey {
+   my $self = shift;
+   my %cache = map { $_->getKey => $_ } @{$self->select};
+   \%cache;
+}
+
 =item B<delete>($arrayref)
 
 Deletes all entries specified in the arrayref (they are all objects of type DBIx::SQLite::Simple::Table).
@@ -523,10 +570,10 @@ Patrice E<lt>GomoRE<gt> Auffret
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005, Patrice E<lt>GomoRE<gt> Auffret
+Copyright (c) 2005-2006, Patrice E<lt>GomoRE<gt> Auffret
 
 You may distribute this module under the terms of the Artistic license.
-See Copying file in the source distribution archive.
+See LICENSE.Artistic file in the source distribution archive.
 
 =cut
 

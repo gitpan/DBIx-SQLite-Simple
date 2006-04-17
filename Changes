@@ -1,0 +1,10 @@
+Revision history for Perl extension DBIx::SQLite::Simple.
+
+0.31 Mon Apr 17 16:39:14 CEST 2006
+   - added selectById()
+   - added selectByKey()
+   => this is a scheme to make easy to cache data
+
+0.30 Wed Jun 15 19:31:21 CEST 2005
+   - first public release
+
