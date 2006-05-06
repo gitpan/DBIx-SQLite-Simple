@@ -1,5 +1,5 @@
 #
-# $Id: Table.pm,v 1.18 2006/04/17 14:40:53 gomor Exp $
+# $Id: Table.pm,v 1.22 2006/05/03 23:09:51 gomor Exp $
 #
 
 package DBIx::SQLite::Simple::Table;
@@ -7,13 +7,14 @@ use strict;
 use warnings;
 use Carp;
 
-require Class::Gomor::Hash;
-our @ISA = qw(Class::Gomor::Hash);
+require Class::Gomor::Array;
+our @ISA = qw(Class::Gomor::Array);
 
 our @AS = qw(
    dbo
 );
-__PACKAGE__->buildAccessorsScalar(\@AS);
+__PACKAGE__->cgBuildIndices;
+__PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
 require DBIx::SQLite::Simple;
 
@@ -30,14 +31,14 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    package TPub;
 
    require DBIx::SQLite::Simple::Table;
-   require Class::Gomor::Hash;
-   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Hash);
+   require Class::Gomor::Array;
+   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Array);
 
    our @AS = qw(
       idPub
       pub
    );
-   __PACKAGE__->buildAccessorsScalar(\@AS);
+   __PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
    # 'our $Id' and 'our @Fields' are named Id and Fields for a good
    # reason, so do not name these variables by another name.
@@ -51,14 +52,14 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    package TBeer;
 
    require DBIx::SQLite::Simple::Table;
-   require Class::Gomor::Hash;
-   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Hash);
+   require Class::Gomor::Array;
+   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Array);
 
    our @AS = qw(
       beer
       country
    );
-   __PACKAGE__->buildAccessorsScalar(\@AS);
+   __PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
    our @Fields = @AS;
 
@@ -108,7 +109,7 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    $tBeer->commit;
 
    # Update Dremmwel
-   my $dremmwelOld = $dremmwel->clone;
+   my $dremmwelOld = $dremmwel->cgClone;
    $dremmwel->country('BZH');
    $tBeer->update([ $dremmwel ], $dremmwelOld);
    $tBeer->commit;
@@ -143,26 +144,6 @@ sub new {
       unless $self->dbo;
 
    $self;
-}
-
-=item B<clone>
-
-Create a copy of the object.
-
-=cut
-
-sub clone {
-   my $self = shift;
-
-   no strict 'refs';
-   my $id     = ${ref($self). '::Id'};
-   my @fields = @{ref($self). '::Fields'};
-
-   my %values;
-   $values{$_}  = $self->$_ for @fields;
-   $values{$id} = $self->$id if $id;
-
-   ref($self)->new(%values);
 }
 
 sub __toObj {
@@ -454,10 +435,10 @@ sub selectById {
    my $self = shift;
 
    no strict 'refs';
-   my $id     = ${ref($self). '::Id'};
+   my $id = ${ref($self). '::Id'};
 
    my $sorted;
-   $sorted->[$_->$id] = $_ for @{$self->select};
+   $sorted->[$_->$id] = $_ for @{$self->select(@_)};
    $sorted;
 }
 
@@ -485,7 +466,7 @@ Method used to cache a table content. It uses B<getKey> to store the object into
 
 sub selectByKey {
    my $self = shift;
-   my %cache = map { $_->getKey => $_ } @{$self->select};
+   my %cache = map { $_->getKey => $_ } @{$self->select(@_)};
    \%cache;
 }
 

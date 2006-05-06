@@ -1,5 +1,5 @@
 #
-# $Id: Simple.pm,v 1.9 2006/04/17 14:40:53 gomor Exp $
+# $Id: Simple.pm,v 1.11 2006/05/03 22:03:15 gomor Exp $
 #
 
 package DBIx::SQLite::Simple;
@@ -7,17 +7,18 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 require DBI;
-require Class::Gomor::Hash;
-our @ISA = qw(Class::Gomor::Hash);
+require Class::Gomor::Array;
+our @ISA = qw(Class::Gomor::Array);
 
 our @AS = qw(
    db
    _dbh
 );
-__PACKAGE__->buildAccessorsScalar(\@AS);
+__PACKAGE__->cgBuildIndices;
+__PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
 our $Dbo;
 

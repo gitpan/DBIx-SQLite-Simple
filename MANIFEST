@@ -1,12 +1,12 @@
 Changes
+lib/DBIx/SQLite/Simple.pm
+lib/DBIx/SQLite/Simple/Table.pm
 LICENSE
 LICENSE.Artistic
 Makefile.PL
 MANIFEST			This list of files
 META.yml			Module meta-data (added by MakeMaker)
 README
-Simple.pm
-Simple/Table.pm
 t/01-use.t
 t/02-newdb.t
 t/03-id-type-table.t

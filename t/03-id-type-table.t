@@ -4,14 +4,15 @@ BEGIN { plan(tests => 1) }
 package TPub;
 
 require DBIx::SQLite::Simple::Table;
-require Class::Gomor::Hash;
-our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Hash);
+require Class::Gomor::Array;
+our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Array);
 
 our @AS = qw(
    idPub
    pub
 );
-__PACKAGE__->buildAccessorsScalar(\@AS);
+__PACKAGE__->cgBuildIndices;
+__PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
 our $Id     = $AS[0];
 our @Fields = @AS[1..$#AS];
