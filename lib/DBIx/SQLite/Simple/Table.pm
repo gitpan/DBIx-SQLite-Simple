@@ -1,5 +1,5 @@
 #
-# $Id: Table.pm,v 1.22 2006/05/03 23:09:51 gomor Exp $
+# $Id: Table.pm,v 1.24 2006/06/11 09:34:46 gomor Exp $
 #
 
 package DBIx::SQLite::Simple::Table;
@@ -31,13 +31,13 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    package TPub;
 
    require DBIx::SQLite::Simple::Table;
-   require Class::Gomor::Array;
-   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Array);
+   our @ISA = qw(DBIx::SQLite::Simple::Table);
 
    our @AS = qw(
       idPub
       pub
    );
+   __PACKAGE__->cgBuildIndices;
    __PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
    # 'our $Id' and 'our @Fields' are named Id and Fields for a good
@@ -52,13 +52,13 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    package TBeer;
 
    require DBIx::SQLite::Simple::Table;
-   require Class::Gomor::Array;
-   our @ISA = qw(DBIx::SQLite::Simple::Table Class::Gomor::Array);
+   our @ISA = qw(DBIx::SQLite::Simple::Table);
 
    our @AS = qw(
       beer
       country
    );
+   __PACKAGE__->cgBuildIndices;
    __PACKAGE__->cgBuildAccessorsScalar(\@AS);
 
    our @Fields = @AS;
@@ -77,7 +77,7 @@ DBIx::SQLite::Simple::Table - superclass only used to handle SQL tables
    my $tBeer = TBeer->new;
 
    # Create tables
-   $tPub->create unless $tPub->exists;
+   $tPub->create  unless $tPub->exists;
    $tBeer->create unless $tBeer->exists;
 
    # Create some entries
@@ -160,6 +160,8 @@ sub __toObj {
    \@obj;
 }
 
+sub _carp { shift; carp("@{[(caller(0))[3]]}: ".shift()."\n"); undef }
+
 sub _create {
    my $self = shift;
    my ($fields, $noKey) = @_;
@@ -179,7 +181,8 @@ sub _create {
 
    $self->dbo->_dbh->do($query);
 
-   carp('_create: do: query['.$query.']: '.$self->dbo->_dbh->errstr)
+   return $self->_carp('_create: do: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    1;
@@ -212,14 +215,17 @@ sub _delete {
    $query .= $_. '=? AND ' for @$fields;
    $query =~ s/ AND $//;
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_delete: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_delete: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    for my $obj (@$values) {
       my @fields;
       push @fields, $obj->$_ for @$fields;
       $sth->execute(@fields);
-      carp('_delete: execute: '. $self->dbo->_dbh->errstr)
+
+      return $self->_carp('_delete: execute: '.$self->dbo->_dbh->errstr)
          if $self->dbo->_dbh->err;
    }
    $sth->finish;
@@ -244,7 +250,9 @@ sub _update {
       $query =~ s/ AND $//;
    }
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_update: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_update: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    for my $obj (@$values) {
@@ -253,7 +261,8 @@ sub _update {
       $id ? do { push @fields, $obj->$id               }
           : do { push @fields, $where->$_ for @$fields };
       $sth->execute(@fields);
-      carp('_update: execute: '. $self->dbo->_dbh->errstr)
+
+      return $self->_carp('_update: execute: '.$self->dbo->_dbh->errstr)
          if $self->dbo->_dbh->err;
    }
    $sth->finish;
@@ -273,14 +282,17 @@ sub _insert {
    $query .= ('?, ' x scalar @$fields);
    $query =~ s/, $/)/;
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_insert: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_insert: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    for my $obj (@$values) {
       my @fields;
       push @fields, $obj->$_ for @$fields;
       $sth->execute(@fields);
-      carp('_insert: execute: '. $self->dbo->_dbh->errstr)
+
+      return $self->_carp('_insert: execute: '.$self->dbo->_dbh->errstr)
          if $self->dbo->_dbh->err;
    }
    $sth->finish;
@@ -304,18 +316,21 @@ sub _select {
    }
 
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_select: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_select: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    %fields
       ? $sth->execute(values %fields)
       : $sth->execute;
 
-   carp('_select: execute: '.$self->dbo->_dbh->errstr)
+   return $self->_carp('_select: execute: '.$self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    my $res = $sth->fetchall_arrayref({});
-   carp('_select: fetchall_arrayref: '. $self->dbo->_dbh->errstr)
+
+   return $self->_carp('_select: fetchall_arrayref: '.$self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    $sth->finish;
@@ -336,15 +351,19 @@ sub _lookupId {
    $query =~ s/ AND $//;
 
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_lookupId: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupId: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    $sth->execute(values %fields);
-   carp('_lookupId: execute: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupId: execute: '.$self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    my @res = $sth->fetchrow_array;
-   carp('_lookupId: fetchrow_array: '. $self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupId: fetchrow_array: '.$self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    $sth->finish;
@@ -363,15 +382,20 @@ sub _lookupString {
    $query =~ s/ AND $//;
 
    my $sth = $self->dbo->_dbh->prepare($query);
-   carp('_lookupString: prepare: query['.$query.']: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupString: prepare: query['.$query.']: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    $sth->execute(values %fields);
-   carp('_lookupString: execute: '.$self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupString: execute: '.$self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    my @res = $sth->fetchrow_array;
-   carp('_lookupString: fetchrow_array: '. $self->dbo->_dbh->errstr)
+
+   return $self->_carp('_lookupString: fetchrow_array: '.
+                       $self->dbo->_dbh->errstr)
       if $self->dbo->_dbh->err;
 
    $sth->finish;

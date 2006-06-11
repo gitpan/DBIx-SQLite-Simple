@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::SQLite::Simple.
 
+0.33 Sun Jun 11 11:35:40 CEST 2006
+   - error messages rewritten to be more useful
+   - pod: bugfix in SYNOPSIS
+
 0.32 Sat May  6 12:15:00 CEST 2006
    - now uses Class::Gomor::Array instead of Class::Gomor::Hash
    - added possibility for selectById() and selectByKey() to use where clauses

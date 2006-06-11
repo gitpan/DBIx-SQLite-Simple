@@ -1,3 +1,6 @@
+#
+# $Id: Makefile.PL,v 1.9 2006/06/11 09:32:58 gomor Exp $
+#
 use ExtUtils::MakeMaker;
 
 WriteMakefile(

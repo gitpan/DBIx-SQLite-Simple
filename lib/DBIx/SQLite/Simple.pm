@@ -1,5 +1,5 @@
 #
-# $Id: Simple.pm,v 1.11 2006/05/03 22:03:15 gomor Exp $
+# $Id: Simple.pm,v 1.12 2006/06/11 09:34:12 gomor Exp $
 #
 
 package DBIx::SQLite::Simple;
@@ -7,7 +7,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.32';
+our $VERSION = '0.33';
 
 require DBI;
 require Class::Gomor::Array;
