@@ -1,4 +1,5 @@
 Changes
+examples/pubs.pl
 lib/DBIx/SQLite/Simple.pm
 lib/DBIx/SQLite/Simple/Table.pm
 LICENSE
@@ -11,3 +12,5 @@ t/01-use.t
 t/02-newdb.t
 t/03-id-type-table.t
 t/04-entry-type-table.t
+t/05-pod-coverage.t
+t/06-test-pod.t

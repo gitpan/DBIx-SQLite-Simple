@@ -1,5 +1,5 @@
 #
-# $Id: Table.pm,v 1.24 2006/06/11 09:34:46 gomor Exp $
+# $Id: Table.pm,v 1.25 2007/01/27 13:35:02 gomor Exp $
 #
 
 package DBIx::SQLite::Simple::Table;
@@ -575,7 +575,7 @@ Patrice E<lt>GomoRE<gt> Auffret
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2006, Patrice E<lt>GomoRE<gt> Auffret
+Copyright (c) 2005-2007, Patrice E<lt>GomoRE<gt> Auffret
 
 You may distribute this module under the terms of the Artistic license.
 See LICENSE.Artistic file in the source distribution archive.

@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::SQLite::Simple.
 
+0.34 Sat Jan 27 14:33:41 CET 2007
+   - new: examples/pubs.pl
+   - new: tests for pod coverage and alike
+
 0.33 Sun Jun 11 11:35:40 CEST 2006
    - error messages rewritten to be more useful
    - pod: bugfix in SYNOPSIS
