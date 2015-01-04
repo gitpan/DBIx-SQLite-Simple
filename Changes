@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::SQLite::Simple.
 
+0.35 Sun Jan  4 17:00:20 CET 2015
+   - EOL: this is probably the last release, consider switching to Class::DBI
+   - copyright: 2015
+
 0.34 Sat Jan 27 14:33:41 CET 2007
    - new: examples/pubs.pl
    - new: tests for pod coverage and alike

@@ -1,15 +1,27 @@
---- #YAML:1.0
-name:                DBIx-SQLite-Simple
-version:             0.34
-abstract:            easy access to SQLite databases using objects
-license:             Artistic
-generated_by:        ExtUtils::MakeMaker version 6.31
-distribution_type:   module
-requires:     
-    Class::Gomor:                  0
-    DBD::SQLite:                   0
-meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
-    version: 1.2
+---
+abstract: 'easy access to SQLite databases using objects'
 author:
-    - GomoR <perl@gomor.org>
+  - 'GomoR <gomor_at_cpan.org>'
+build_requires: {}
+configure_requires:
+  Module::Build: '0'
+dynamic_config: 1
+generated_by: 'Module::Build version 0.421, CPAN::Meta::Converter version 2.143240'
+license: artistic
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: DBIx-SQLite-Simple
+provides:
+  DBIx::SQLite::Simple:
+    file: lib/DBIx/SQLite/Simple.pm
+    version: '0.35'
+  DBIx::SQLite::Simple::Table:
+    file: lib/DBIx/SQLite/Simple/Table.pm
+requires:
+  Class::Gomor: '0'
+  DBI: '0'
+  perl: v5.6.1
+resources:
+  license: http://opensource.org/licenses/artistic-license.php
+version: '0.35'

@@ -1,12 +1,12 @@
 #
-# $Id: Simple.pm,v 1.14 2007/01/27 13:35:02 gomor Exp $
+# $Id: Simple.pm,v 1.14 2007-01-27 13:35:02 gomor Exp $
 #
 package DBIx::SQLite::Simple;
 use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.34';
+our $VERSION = '0.35';
 
 require DBI;
 require Class::Gomor::Array;
@@ -106,7 +106,7 @@ Patrice E<lt>GomoRE<gt> Auffret
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2007, Patrice E<lt>GomoRE<gt> Auffret
+Copyright (c) 2005-2015, Patrice E<lt>GomoRE<gt> Auffret
 
 You may distribute this module under the terms of the Artistic license.
 See LICENSE.Artistic file in the source distribution archive.
